@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>Folheto Opta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="stpageflip.min.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #flipbook {
+      width: 90vw;
+      height: 90vh;
+    }
+  </style>
+</head>
+<body>
+
+<div id="flipbook"></div>
+
+<script src="stpageflip.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+      width: 600,
+      height: 850,
+      size: "stretch",
+      minWidth: 315,
+      maxWidth: 1000,
+      minHeight: 400,
+      maxHeight: 1536,
+      drawShadow: true,
+      flippingTime: 1000,
+      usePortrait: false,
+      startPage: 0,
+      autoSize: true,
+      maxShadowOpacity: 0.5,
+      showCover: true,
+      mobileScrollSupport: false
+    });
+
+    pageFlip.loadFromImages([
+      "https://i.imgur.com/uH4uk5l.jpeg",
+      "https://i.imgur.com/aoCOVms.jpeg",
+      "https://i.imgur.com/VWWJ1z5.jpeg",
+      "https://i.imgur.com/JVglSjP.jpeg"
+    ]);
+  });
+</script>
+
+</body>
+</html>
