@@ -45,27 +45,17 @@
       mobileScrollSupport: true
     });
 
+    // GARANTIR PAR DE PÁGINAS após a capa
     pageFlip.loadFromImages([
-      "https://i.imgur.com/uH4uk5l.jpeg",
-      "https://i.imgur.com/aoCOVms.jpeg",
-      "https://i.imgur.com/VWWJ1z5.jpeg",
-      "https://i.imgur.com/JVglSjP.jpeg",
-      "https://i.imgur.com/Gf6qv4V.jpeg"
+      "https://i.imgur.com/uH4uk5l.jpeg",  // capa
+      "https://i.imgur.com/aoCOVms.jpeg",  // página 2
+      "https://i.imgur.com/VWWJ1z5.jpeg",  // página 3
+      "https://i.imgur.com/JVglSjP.jpeg",  // contra capa
+      "https://i.imgur.com/Gf6qv4V.jpeg",  // página branca
+      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca duplicada
     ]);
 
-    // Interceptar tentativa de virar fora do intervalo válido
-    document.addEventListener("keydown", (e) => {
-      const current = pageFlip.getCurrentPageIndex();
-      const total = pageFlip.getPageCount();
-
-      if ((e.key === "ArrowLeft" || e.key === "PageUp") && current === 0) {
-        e.preventDefault(); // bloqueia voltar da capa
-      }
-      if ((e.key === "ArrowRight" || e.key === "PageDown") && current === total - 1) {
-        e.preventDefault(); // bloqueia ir além da última
-      }
-    });
-
+    // CORRIGE BUG DE VOLTAR E AVANÇAR ALÉM DAS BORDAS
     pageFlip.on("flip", (e) => {
       const total = pageFlip.getPageCount();
 
