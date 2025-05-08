@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Folheto Opta</title>
+  <title>Folheto Digital - Opta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="stpageflip.min.css" />
   <style>
-    body {
+    html, body {
       margin: 0;
       background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      overflow: hidden;
     }
     #flipbook {
-      width: 90vw;
-      height: 90vh;
+      width: 100vw;
+      height: 100vh;
     }
   </style>
 </head>
@@ -28,45 +26,32 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
-      width: 600,
-      height: 850,
+      width: 800,
+      height: 1120,
       size: "stretch",
       minWidth: 315,
-      maxWidth: 1000,
+      maxWidth: 1600,
       minHeight: 400,
-      maxHeight: 1536,
+      maxHeight: 2400,
       drawShadow: true,
       flippingTime: 800,
       usePortrait: window.innerWidth < 768,
       startPage: 0,
       autoSize: true,
-      maxShadowOpacity: 0.5,
+      maxShadowOpacity: 0.4,
       showCover: true,
-      mobileScrollSupport: true
+      mobileScrollSupport: true,
     });
 
-    // GARANTIR PAR DE PÁGINAS após a capa
     pageFlip.loadFromImages([
-      "https://i.imgur.com/uH4uk5l.jpeg",  // capa
-      "https://i.imgur.com/aoCOVms.jpeg",  // página 2
-      "https://i.imgur.com/VWWJ1z5.jpeg",  // página 3
-      "https://i.imgur.com/JVglSjP.jpeg",  // contra capa
-      "https://i.imgur.com/Gf6qv4V.jpeg",  // página branca
-      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca duplicada
+      "https://i.imgur.com/uH4uk5l.jpeg",  // 0 - CAPA (sozinha)
+      "https://i.imgur.com/aoCOVms.jpeg",  // 1 - Página interna
+      "https://i.imgur.com/VWWJ1z5.jpeg",  // 2 - Página interna
+      "https://i.imgur.com/JVglSjP.jpeg",  // 3 - Página interna
+      "https://i.imgur.com/Gf6qv4V.jpeg",  // 4 - Contra capa
+      "https://i.imgur.com/Gf6qv4V.jpeg",  // 5 - Página branca (ajuste visual)
+      "https://i.imgur.com/uH4uk5l.jpeg"   // 6 - DUPLICATA da capa (fechamento visual correto)
     ]);
-
-    // CORRIGE BUG DE VOLTAR E AVANÇAR ALÉM DAS BORDAS
-    pageFlip.on("flip", (e) => {
-      const total = pageFlip.getPageCount();
-
-      if (e.data === 0) {
-        pageFlip.updateState({ disableFlip: "backward" });
-      } else if (e.data === total - 1) {
-        pageFlip.updateState({ disableFlip: "forward" });
-      } else {
-        pageFlip.updateState({ disableFlip: false });
-      }
-    });
   });
 </script>
 
