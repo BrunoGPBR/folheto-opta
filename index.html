@@ -6,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="stpageflip.min.css" />
   <style>
-    body {
+    html, body {
       margin: 0;
       background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      overflow: hidden;
     }
     #flipbook {
       width: 100vw;
@@ -32,14 +30,14 @@
     const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
       width: 800,
       height: 1120,
-      size: isMobile ? "fixed" : "stretch", // mantém proporção no mobile
+      size: "stretch", // deixa o conteúdo fluir melhor no mobile
+      usePortrait: isMobile,
       minWidth: 315,
       maxWidth: 1600,
       minHeight: 400,
       maxHeight: 2400,
       drawShadow: true,
       flippingTime: 800,
-      usePortrait: isMobile,
       startPage: 0,
       autoSize: true,
       maxShadowOpacity: 0.4,
@@ -52,10 +50,9 @@
       "https://i.imgur.com/aoCOVms.jpeg",  // página 2
       "https://i.imgur.com/VWWJ1z5.jpeg",  // página 3
       "https://i.imgur.com/JVglSjP.jpeg",  // contra capa
-      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca para encerrar
+      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca final
     ]);
 
-    // Bloqueia virar além do limite
     pageFlip.on("flip", (e) => {
       const total = pageFlip.getPageCount();
 
