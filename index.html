@@ -2,36 +2,136 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <title>Folheto Opta</title>
+  <title>Folheto Opta - Interativo + Leitor HD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="stpageflip.min.css" />
   <style>
-    html, body {
+    body {
       margin: 0;
       background: #111;
       height: 100vh;
       overflow: hidden;
+      font-family: sans-serif;
     }
     #flipbook {
       width: 100vw;
       height: 100vh;
     }
+    #fullscreenBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #fff;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* Estilo do modo tela cheia */
+    #fullscreenViewer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    #fullscreenViewer img {
+      max-width: 90%;
+      max-height: 85%;
+      box-shadow: 0 0 10px #000;
+    }
+
+    .nav-btn {
+      margin: 20px;
+      background: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 18px;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
+<!-- Botão para abrir visualização em alta -->
+<button id="fullscreenBtn">🔍 Ver em Alta Qualidade</button>
+
+<!-- Folheto interativo -->
 <div id="flipbook"></div>
+
+<!-- Modo leitura fullscreen -->
+<div id="fullscreenViewer">
+  <button class="close-btn" onclick="closeFullscreen()">✖</button>
+  <img id="viewerImage" src="" alt="Página">
+  <div>
+    <button class="nav-btn" onclick="prevImage()">⬅ Anterior</button>
+    <button class="nav-btn" onclick="nextImage()">Próxima ➡</button>
+  </div>
+</div>
 
 <script src="stpageflip.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const isMobile = window.innerWidth < 768;
+  const images = [
+    "https://i.imgur.com/uH4uk5l.jpeg",
+    "https://i.imgur.com/aoCOVms.jpeg",
+    "https://i.imgur.com/VWWJ1z5.jpeg",
+    "https://i.imgur.com/JVglSjP.jpeg",
+    "https://i.imgur.com/Gf6qv4V.jpeg"
+  ];
 
+  let currentImage = 0;
+
+  function openFullscreen() {
+    document.getElementById("fullscreenViewer").style.display = "flex";
+    document.getElementById("viewerImage").src = images[currentImage];
+  }
+
+  function closeFullscreen() {
+    document.getElementById("fullscreenViewer").style.display = "none";
+  }
+
+  function nextImage() {
+    if (currentImage < images.length - 1) {
+      currentImage++;
+      document.getElementById("viewerImage").src = images[currentImage];
+    }
+  }
+
+  function prevImage() {
+    if (currentImage > 0) {
+      currentImage--;
+      document.getElementById("viewerImage").src = images[currentImage];
+    }
+  }
+
+  document.getElementById("fullscreenBtn").addEventListener("click", openFullscreen);
+
+  document.addEventListener("DOMContentLoaded", () => {
     const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
       width: 800,
       height: 1120,
-      size: "stretch", // deixa o conteúdo fluir melhor no mobile
-      usePortrait: isMobile,
+      size: "stretch",
+      usePortrait: window.innerWidth < 768,
       minWidth: 315,
       maxWidth: 1600,
       minHeight: 400,
@@ -42,20 +142,13 @@
       autoSize: true,
       maxShadowOpacity: 0.4,
       showCover: true,
-      mobileScrollSupport: true,
+      mobileScrollSupport: true
     });
 
-    pageFlip.loadFromImages([
-      "https://i.imgur.com/uH4uk5l.jpeg",  // capa
-      "https://i.imgur.com/aoCOVms.jpeg",  // página 2
-      "https://i.imgur.com/VWWJ1z5.jpeg",  // página 3
-      "https://i.imgur.com/JVglSjP.jpeg",  // contra capa
-      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca final
-    ]);
+    pageFlip.loadFromImages(images);
 
     pageFlip.on("flip", (e) => {
       const total = pageFlip.getPageCount();
-
       if (e.data === 0) {
         pageFlip.updateState({ disableFlip: "backward" });
       } else if (e.data === total - 1) {
