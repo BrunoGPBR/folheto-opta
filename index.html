@@ -50,8 +50,21 @@
       "https://i.imgur.com/aoCOVms.jpeg",  // página 2
       "https://i.imgur.com/VWWJ1z5.jpeg",  // página 3
       "https://i.imgur.com/JVglSjP.jpeg",  // contra capa
-      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca final
+      "https://i.imgur.com/Gf6qv4V.jpeg"   // página branca para evitar bug final
     ]);
+
+    // Corrigir bug da primeira e última página
+    pageFlip.on("flip", (e) => {
+      const totalPages = pageFlip.getPageCount();
+
+      if (e.data === 0) {
+        pageFlip.updateState({ disableFlip: "backward" }); // bloqueia voltar da capa
+      } else if (e.data === totalPages - 1) {
+        pageFlip.updateState({ disableFlip: "forward" }); // bloqueia avançar da última
+      } else {
+        pageFlip.updateState({ disableFlip: false }); // navegação normal no meio
+      }
+    });
   });
 </script>
 
