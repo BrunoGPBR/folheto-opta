@@ -240,50 +240,59 @@ let translateY = 0;
 });
 
 // Drag to pan
-viewerImage.addEventListener("mousedown", (e) => {
-  if (scale <= 1) return;
-  isDragging = true;
-  startX = e.clientX - translateX;
-  startY = e.clientY - translateY;
-  viewerImage.style.cursor = 'grabbing';
-});
 
-window.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  translateX = e.clientX - startX;
-  translateY = e.clientY - startY;
-  viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-});
 
-window.addEventListener("mouseup", () => {
-  isDragging = false;
-  viewerImage.style.cursor = 'grab';
-});
 
-    document.getElementById("zoomContainer").addEventListener("wheel", function(e) {
-  e.preventDefault();
-  const zoomFactor = 0.1;
-  const rect = viewerImage.getBoundingClientRect();
-  const offsetX = e.clientX - rect.left;
-  const offsetY = e.clientY - rect.top;
 
-  const oldScale = scale;
-  if (e.deltaY < 0) {
-    scale += zoomFactor;
-  } else {
-    scale = Math.max(1, scale - zoomFactor);
-  }
 
-  const dx = offsetX - rect.width / 2;
-  const dy = offsetY - rect.height / 2;
 
-  translateX -= dx * (scale / oldScale - 1);
-  translateY -= dy * (scale / oldScale - 1);
-
-  viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-});
+    
 
     document.addEventListener("DOMContentLoaded", () => {
+  viewerImage = document.getElementById("viewerImage");
+
+  viewerImage.addEventListener("mousedown", (e) => {
+    if (scale <= 1) return;
+    isDragging = true;
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
+    viewerImage.style.cursor = 'grabbing';
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+    viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  });
+
+  window.addEventListener("mouseup", () => {
+    isDragging = false;
+    viewerImage.style.cursor = 'grab';
+  });
+
+  document.getElementById("zoomContainer").addEventListener("wheel", function(e) {
+    e.preventDefault();
+    const zoomFactor = 0.1;
+    const rect = viewerImage.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left;
+    const offsetY = e.clientY - rect.top;
+
+    const oldScale = scale;
+    if (e.deltaY < 0) {
+      scale += zoomFactor;
+    } else {
+      scale = Math.max(1, scale - zoomFactor);
+    }
+
+    const dx = offsetX - rect.width / 2;
+    const dy = offsetY - rect.height / 2;
+
+    translateX -= dx * (scale / oldScale - 1);
+    translateY -= dy * (scale / oldScale - 1);
+
+    viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  });
   viewerImage = document.getElementById("viewerImage");
   viewerImage.onerror = () => {
     viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
