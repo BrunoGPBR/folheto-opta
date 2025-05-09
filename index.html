@@ -31,6 +31,7 @@
     }
 
     #fullscreenBtn {
+      z-index: 998;
       position: fixed;
       top: 20px;
       right: 20px;
@@ -63,6 +64,7 @@
     }
 
     #fullscreenViewer {
+      z-index: 9999;
       display: none;
       position: fixed;
       top: 0;
@@ -141,7 +143,7 @@
   </style>
 </head>
 <body>
-  <button id="fullscreenBtn" aria-label="Tela cheia">
+  <button id="fullscreenBtn" aria-label="Tela cheia" style="display: flex;">
     <i data-lucide="maximize" class="lucide-icon"></i> Tela Cheia
   </button>
 
@@ -151,16 +153,10 @@
     </section>
   </main>
 
-  <div id="fullscreenViewer">
-    <button class="close-btn" onclick="closeFullscreen()">
-      <i data-lucide="x" class="lucide-icon"></i>
-    </button>
-    <button class="nav-btn prev" onclick="prevImage()">
-      <i data-lucide="chevron-left" class="lucide-icon"></i>
-    </button>
-    <div id="zoomContainer">
-      <img id="viewerImage" src="" alt="Página ampliada" />
-    </div>
+  $1
+<a href="/download/folheto-opta.pdf" target="_blank" download style="position: fixed; bottom: 24px; left: 24px; z-index: 1002; background: #1a1a1a; border: none; padding: 10px 16px; color: white; font-weight: bold; text-decoration: none; border-radius: 8px; font-family: 'Segoe UI', sans-serif;">
+  <i data-lucide="download" class="lucide-icon"></i> Baixar PDF
+</a>
     <button class="nav-btn next" onclick="nextImage()">
       <i data-lucide="chevron-right" class="lucide-icon"></i>
     </button>
@@ -194,14 +190,16 @@ let translateY = 0;
 
     function openFullscreen() {
   document.getElementById("fullscreenViewer").style.display = "flex";
+  document.getElementById("fullscreenBtn").style.display = "none";
   currentImage = 0;
   updateImage();
   updatePageIndicator();
 }
 
     function closeFullscreen() {
-      document.getElementById("fullscreenViewer").style.display = "none";
-    }
+  document.getElementById("fullscreenViewer").style.display = "none";
+  document.getElementById("fullscreenBtn").style.display = "flex";
+}
 
     function nextImage() {
       if (currentImage < fullscreenImages.length - 1) {
