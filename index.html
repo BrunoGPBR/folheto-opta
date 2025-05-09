@@ -171,27 +171,33 @@
     lucide.createIcons();
 
     const fullscreenImages = [
-      "https://i.imgur.com/uH4uk5l.jpeg",
-      "https://i.imgur.com/aoCOVms.jpeg",
-      "https://i.imgur.com/VWWJ1z5.jpeg",
-      "https://i.imgur.com/JVglSjP.jpeg",
-      "https://i.imgur.com/Gf6qv4V.jpeg"
-    ];
+  "https://i.imgur.com/uH4uk5l.jpeg",
+  "https://i.imgur.com/aoCOVms.jpeg",
+  "https://i.imgur.com/VWWJ1z5.jpeg",
+  "https://i.imgur.com/JVglSjP.jpeg"
+]; // Removida a página branca do modo fullscreen
 
     let currentImage = 0;
     const viewerImage = document.getElementById("viewerImage");
     let scale = 1;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let translateX = 0;
+let translateY = 0;
 
     function updateImage() {
       viewerImage.src = fullscreenImages[currentImage];
       scale = 1;
-      viewerImage.style.transform = `scale(${scale})`;
+      viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     }
 
     function openFullscreen() {
-      document.getElementById("fullscreenViewer").style.display = "flex";
-      updateImage();
-    }
+  document.getElementById("fullscreenViewer").style.display = "flex";
+  currentImage = 0;
+  updateImage();
+  updatePageIndicator();
+}
 
     function closeFullscreen() {
       document.getElementById("fullscreenViewer").style.display = "none";
@@ -213,18 +219,81 @@
 
     document.getElementById("fullscreenBtn").addEventListener("click", openFullscreen);
 
+// Drag to pan
+viewerImage.addEventListener("mousedown", (e) => {
+  if (scale <= 1) return;
+  isDragging = true;
+  startX = e.clientX - translateX;
+  startY = e.clientY - translateY;
+  viewerImage.style.cursor = 'grabbing';
+});
+
+window.addEventListener("mousemove", (e) => {
+  if (!isDragging) return;
+  translateX = e.clientX - startX;
+  translateY = e.clientY - startY;
+  viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+});
+
+window.addEventListener("mouseup", () => {
+  isDragging = false;
+  viewerImage.style.cursor = 'grab';
+});
+
     document.getElementById("zoomContainer").addEventListener("wheel", function(e) {
-      e.preventDefault();
-      const zoomFactor = 0.1;
-      if (e.deltaY < 0) {
-        scale += zoomFactor;
-      } else {
-        scale = Math.max(1, scale - zoomFactor);
-      }
-      viewerImage.style.transform = `scale(${scale})`;
-    });
+  e.preventDefault();
+  const zoomFactor = 0.1;
+  const rect = viewerImage.getBoundingClientRect();
+  const offsetX = e.clientX - rect.left;
+  const offsetY = e.clientY - rect.top;
+
+  const oldScale = scale;
+  if (e.deltaY < 0) {
+    scale += zoomFactor;
+  } else {
+    scale = Math.max(1, scale - zoomFactor);
+  }
+
+  const dx = offsetX - rect.width / 2;
+  const dy = offsetY - rect.height / 2;
+
+  translateX -= dx * (scale / oldScale - 1);
+  translateY -= dy * (scale / oldScale - 1);
+
+  viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+});
 
     document.addEventListener("DOMContentLoaded", () => {
+  const pageIndicator = document.createElement("div");
+  pageIndicator.style.position = "fixed";
+  pageIndicator.style.bottom = "20px";
+  pageIndicator.style.right = "50%";
+  pageIndicator.style.transform = "translateX(50%)";
+  pageIndicator.style.color = "#fff";
+  pageIndicator.style.fontSize = "14px";
+  pageIndicator.style.fontFamily = "Segoe UI, sans-serif";
+  pageIndicator.style.zIndex = "1002";
+  pageIndicator.id = "pageIndicator";
+  document.getElementById("fullscreenViewer").appendChild(pageIndicator);
+
+  function updatePageIndicator() {
+    pageIndicator.textContent = `Página ${currentImage + 1} de ${fullscreenImages.length}`;
+  }
+
+  const originalUpdateImage = updateImage;
+  updateImage = function() {
+    originalUpdateImage();
+    updatePageIndicator();
+  };
+      const goToFirstPageBtn = document.createElement("button");
+      goToFirstPageBtn.innerHTML = '<i data-lucide="refresh-ccw" class="lucide-icon"></i>';
+      goToFirstPageBtn.className = "nav-btn";
+      goToFirstPageBtn.style.top = '24px';
+      goToFirstPageBtn.style.left = '24px';
+      goToFirstPageBtn.title = "Voltar à capa";
+      goToFirstPageBtn.onclick = () => pageFlip.flip(0);
+      document.body.appendChild(goToFirstPageBtn);
+      lucide.createIcons();
       const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
         width: 800,
         height: 1120,
