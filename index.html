@@ -16,6 +16,7 @@
       color: #fff;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      user-select: none;
     }
 
     #flipbook {
@@ -27,45 +28,48 @@
     :root {
       --main-orange: #ff6a00;
       --main-orange-light: #ff944d;
-      --main-orange-shadow: rgba(255, 106, 0, 0.5);
+      --main-orange-shadow: rgba(255, 106, 0, 0.25);
       --main-orange-dark: #cc5600;
     }
 
-    /* Botão fullscreen estilizado */
+    /* Botão fullscreen estilizado quadrado moderno */
     #fullscreenBtn {
       position: fixed;
       top: 20px;
       right: 20px;
       background: var(--main-orange);
       border: none;
-      padding: 12px 18px;
-      font-size: 14px;
-      border-radius: 30px;
+      padding: 14px 20px;
+      font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
       z-index: 10;
       transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s ease;
       outline-offset: 2px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       color: white;
-      font-weight: 600;
+      font-weight: 700;
       user-select: none;
-      box-shadow: 0 4px 15px var(--main-orange-shadow);
+      box-shadow: 0 4px 18px var(--main-orange-shadow);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
     }
 
     #fullscreenBtn:hover,
     #fullscreenBtn:focus {
       background: var(--main-orange-dark);
-      transform: scale(1.07);
+      transform: scale(1.1);
       outline: 3px solid var(--main-orange-light);
-      box-shadow: 0 6px 20px var(--main-orange-shadow);
+      box-shadow: 0 6px 25px var(--main-orange-shadow);
     }
 
     #fullscreenBtn svg {
       fill: white;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       flex-shrink: 0;
       transition: fill 0.35s ease;
     }
@@ -79,49 +83,84 @@
       height: 100%;
       background: #000;
       z-index: 999;
+      display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
       animation: fadeIn 0.3s ease-in-out;
-      padding: 20px;
+      padding: 24px;
       box-sizing: border-box;
-    }
-
-    #fullscreenViewer img {
-      max-width: 90%;
-      max-height: 85%;
-      box-shadow:
-        0 0 30px var(--main-orange),
-        inset 0 0 20px var(--main-orange-light);
-      border-radius: 12px;
-      transition: opacity 0.4s ease, box-shadow 0.4s ease;
       user-select: none;
-      background: #111;
+      overflow: hidden;
     }
 
-    /* Botões navegação e fechar estilizados */
+    /* Container do zoom com overflow hidden */
+    #zoomContainer {
+      position: relative;
+      width: 90vw;
+      max-width: 1000px;
+      height: 85vh;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 0 25px var(--main-orange),
+        inset 0 0 24px var(--main-orange-light);
+      background: #111;
+      cursor: grab;
+      touch-action: none; /* para gestos */
+      transition: box-shadow 0.3s ease;
+    }
+    #zoomContainer:active {
+      cursor: grabbing;
+    }
+
+    #viewerImage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      max-width: none; /* vamos controlar via CSS transform */
+      max-height: none;
+      width: auto;
+      height: auto;
+      transform-origin: center center;
+      user-select: none;
+      filter: drop-shadow(0 0 6px var(--main-orange));
+      pointer-events: none;
+      transition: filter 0.3s ease;
+    }
+    #zoomContainer:hover #viewerImage {
+      filter: drop-shadow(0 0 12px var(--main-orange-light));
+    }
+
+    /* Botões navegação e fechar quadrados modernos */
     .nav-btn, .close-btn {
-      background: none;
+      background: #1a1a1a;
       border: none;
       cursor: pointer;
-      outline-offset: 2px;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s ease, box-shadow 0.3s ease;
+      outline-offset: 3px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.35s ease, box-shadow 0.3s ease, background 0.3s ease;
       color: var(--main-orange);
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
       padding: 10px;
-      border-radius: 50%;
-      box-shadow: 0 0 15px var(--main-orange-shadow);
+      border-radius: 8px;
+      box-shadow: 0 0 12px var(--main-orange-shadow);
       font-weight: 600;
       will-change: transform;
+      width: 48px;
+      height: 48px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-clip: padding-box;
+      border: 2px solid transparent;
+      box-sizing: border-box;
     }
 
     .nav-btn svg, .close-btn svg {
       fill: var(--main-orange);
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       pointer-events: none;
       transition: fill 0.35s ease;
     }
@@ -129,32 +168,43 @@
     .nav-btn:hover,
     .nav-btn:focus {
       color: var(--main-orange-light);
-      box-shadow: 0 0 28px var(--main-orange-light);
+      background: #2a1a00;
+      box-shadow: 0 0 24px var(--main-orange-light);
+      border-color: var(--main-orange-light);
       transform: scale(1.2);
+      outline: none;
     }
 
     .nav-btn:disabled {
       color: #444;
       box-shadow: none;
+      background: #0f0f0f;
       cursor: default;
+      border-color: transparent;
     }
 
     .close-btn {
       position: absolute;
-      top: 15px;
-      right: 20px;
-      width: 42px;
-      height: 42px;
+      top: 24px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
       color: var(--main-orange);
       box-shadow: 0 0 20px var(--main-orange-shadow);
       will-change: transform;
+      background: #1a1a1a;
+      border: 2px solid transparent;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .close-btn:hover,
     .close-btn:focus {
       color: var(--main-orange-light);
-      box-shadow: 0 0 35px var(--main-orange-light);
-      transform: scale(1.3);
+      background: #2a1a00;
+      border-color: var(--main-orange-light);
+      box-shadow: 0 0 36px var(--main-orange-light);
+      transform: scale(1.25);
+      outline: none;
     }
 
     @keyframes fadeIn {
@@ -162,26 +212,23 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* Responsive */
+    /* Responsivo */
     @media (max-width: 768px) {
       #fullscreenBtn {
-        padding: 10px 14px;
-        font-size: 13px;
+        padding: 12px 18px;
+        font-size: 14px;
       }
       .nav-btn, .close-btn {
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
       }
-      #fullscreenViewer img {
-        max-width: 95%;
-        max-height: 70%;
-        box-shadow:
-          0 0 20px var(--main-orange),
-          inset 0 0 14px var(--main-orange-light);
+      #zoomContainer {
+        width: 94vw;
+        height: 75vh;
       }
       .nav-btn svg, .close-btn svg {
-        width: 24px;
-        height: 24px;
+        width: 22px;
+        height: 22px;
       }
     }
   </style>
@@ -207,8 +254,10 @@
       <path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 001.41 1.41L12 13.41l4.89 4.89a1 1 0 001.41-1.41L13.41 12l4.89-4.89a1 1 0 000-1.4z"/>
     </svg>
   </button>
-  <img id="viewerImage" src="" alt="Página ampliada do folheto" onerror="imageLoadError()" />
-  <div>
+  <div id="zoomContainer" role="region" aria-label="Visualização em alta qualidade com zoom">
+    <img id="viewerImage" src="" alt="Página ampliada do folheto" onerror="imageLoadError()" />
+  </div>
+  <div style="margin-top: 18px; display: flex; gap: 16px;">
     <button class="nav-btn" onclick="prevImage()" aria-label="Página anterior" title="Página Anterior" type="button" >
       <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
         <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
@@ -224,7 +273,6 @@
 
 <script src="stpageflip.min.js"></script>
 <script>
-  // Imagens para o modo fullscreen (sem a página branca final)
   const fullscreenImages = [
     "https://i.imgur.com/uH4uk5l.jpeg",
     "https://i.imgur.com/aoCOVms.jpeg",
@@ -234,10 +282,186 @@
 
   let currentImage = 0;
 
+  // Variáveis para zoom e pan
+  let scale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+
+  const zoomContainer = document.getElementById('zoomContainer');
+  const viewerImage = document.getElementById('viewerImage');
+
+  function applyTransform() {
+    viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  }
+
+  // Mouse wheel para zoom (desktop)
+  function onWheel(e) {
+    e.preventDefault();
+    const zoomStep = 0.1;
+    let oldScale = scale;
+    if (e.deltaY < 0) {
+      scale += zoomStep;
+    } else {
+      scale -= zoomStep;
+    }
+    scale = Math.min(Math.max(1, scale), 5);
+
+    // Ajustar translate para zoom centrado no mouse
+    const bounds = zoomContainer.getBoundingClientRect();
+    const offsetX = e.clientX - bounds.left;
+    const offsetY = e.clientY - bounds.top;
+
+    const dx = (offsetX - translateX) * (scale / oldScale - 1);
+    const dy = (offsetY - translateY) * (scale / oldScale - 1);
+
+    translateX -= dx;
+    translateY -= dy;
+
+    limitPan();
+    applyTransform();
+  }
+
+  // Limitar pan para não sair a imagem da viewport
+  function limitPan() {
+    if (!viewerImage.naturalWidth || !viewerImage.naturalHeight) return;
+
+    const bounds = zoomContainer.getBoundingClientRect();
+
+    const scaledWidth = viewerImage.naturalWidth * scale;
+    const scaledHeight = viewerImage.naturalHeight * scale;
+
+    // Limites máximos e mínimos de translate para manter imagem dentro do container
+    const minX = Math.min(0, bounds.width - scaledWidth);
+    const maxX = 0;
+    const minY = Math.min(0, bounds.height - scaledHeight);
+    const maxY = 0;
+
+    if (translateX < minX) translateX = minX;
+    if (translateX > maxX) translateX = maxX;
+    if (translateY < minY) translateY = minY;
+    if (translateY > maxY) translateY = maxY;
+  }
+
+  function onMouseDown(e) {
+    if (scale <= 1) return; // sem drag se não estiver zoom
+    e.preventDefault();
+    isDragging = true;
+    startX = e.clientX - translateX;
+    startY = e.clientY - translateY;
+    zoomContainer.style.cursor = 'grabbing';
+  }
+
+  function onMouseMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    translateX = e.clientX - startX;
+    translateY = e.clientY - startY;
+    limitPan();
+    applyTransform();
+  }
+
+  function onMouseUp() {
+    if (isDragging) {
+      isDragging = false;
+      zoomContainer.style.cursor = 'grab';
+    }
+  }
+
+  // Touch handlers para mobile (pinch zoom e pan)
+  let lastTouchDistance = null;
+  let lastTouchMidpoint = null;
+  let isTouchPanning = false;
+  let lastTouchPos = null;
+
+  function getDistance(touches) {
+    const [touch1, touch2] = touches;
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
+  function getMidpoint(touches) {
+    const [touch1, touch2] = touches;
+    return {
+      x: (touch1.clientX + touch2.clientX) / 2,
+      y: (touch1.clientY + touch2.clientY) / 2
+    };
+  }
+
+  function onTouchStart(e) {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      lastTouchDistance = getDistance(e.touches);
+      lastTouchMidpoint = getMidpoint(e.touches);
+      isTouchPanning = false;
+    } else if (scale > 1 && e.touches.length === 1) {
+      isTouchPanning = true;
+      lastTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  }
+
+  function onTouchMove(e) {
+    if (e.touches.length === 2 && lastTouchDistance != null) {
+      e.preventDefault();
+      const newDistance = getDistance(e.touches);
+      const zoomStep = (newDistance - lastTouchDistance) / 200; 
+
+      let oldScale = scale;
+      scale += zoomStep;
+      scale = Math.min(Math.max(1, scale), 5);
+
+      // Ajusta translate para zoom centrado no midpoint
+      const bounds = zoomContainer.getBoundingClientRect();
+      const offsetX = lastTouchMidpoint.x - bounds.left;
+      const offsetY = lastTouchMidpoint.y - bounds.top;
+
+      const dx = (offsetX - translateX) * (scale / oldScale - 1);
+      const dy = (offsetY - translateY) * (scale / oldScale - 1);
+
+      translateX -= dx;
+      translateY -= dy;
+
+      lastTouchDistance = newDistance;
+      lastTouchMidpoint = getMidpoint(e.touches);
+
+      limitPan();
+      applyTransform();
+
+    } else if(isTouchPanning && e.touches.length === 1) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      let dx = touch.clientX - lastTouchPos.x;
+      let dy = touch.clientY - lastTouchPos.y;
+
+      translateX += dx;
+      translateY += dy;
+      limitPan();
+      applyTransform();
+
+      lastTouchPos = { x: touch.clientX, y: touch.clientY };
+    }
+  }
+
+  function onTouchEnd(e) {
+    if(e.touches.length < 2) lastTouchDistance = null;
+    if(e.touches.length === 0) {
+      isTouchPanning = false;
+    }
+  }
+
+
+  /*
+    Controle da navegação e atualização da imagem na visualização fullscreen
+  */
   function openFullscreen() {
     const viewer = document.getElementById("fullscreenViewer");
     viewer.style.display = "flex";
     viewer.focus();
+    currentImage = 0;
+    resetTransform();
     updateImage();
   }
 
@@ -247,48 +471,63 @@
   }
 
   function updateImage() {
-    const img = document.getElementById("viewerImage");
-    img.src = fullscreenImages[currentImage];
-    img.alt = `Página ${currentImage + 1} ampliada do folheto`;
-    img.onerror = imageLoadError;
+    viewerImage.src = fullscreenImages[currentImage];
+    viewerImage.alt = `Página ${currentImage + 1} ampliada do folheto`;
+    resetTransform();
     updateNavButtons();
   }
 
   function imageLoadError() {
-    const img = document.getElementById("viewerImage");
-    img.alt = "Erro ao carregar a imagem.";
-    img.src = "https://via.placeholder.com/800x1120?text=Imagem+indisponível";
+    viewerImage.alt = "Erro ao carregar a imagem.";
+    viewerImage.src = "https://via.placeholder.com/800x1120?text=Imagem+indispon%C3%ADvel";
   }
 
   function nextImage() {
-    if (currentImage < fullscreenImages.length - 1) {
+    if(currentImage < fullscreenImages.length - 1) {
       currentImage++;
       updateImage();
     }
   }
 
   function prevImage() {
-    if (currentImage > 0) {
+    if(currentImage > 0) {
       currentImage--;
       updateImage();
     }
   }
 
-  // Desabilitar botões navegação nas extremidades
-  function updateNavButtons() {
+  function updateNavButtons(){
     const prevBtn = document.querySelector('.nav-btn[onclick="prevImage()"]');
     const nextBtn = document.querySelector('.nav-btn[onclick="nextImage()"]');
     prevBtn.disabled = currentImage === 0;
     nextBtn.disabled = currentImage === fullscreenImages.length - 1;
   }
 
-  // Navegação com teclado para acessibilidade
+  function resetTransform(){
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    applyTransform();
+  }
+
+  // Eventos mouse e touch para zoom e pan
+  zoomContainer.addEventListener('wheel', onWheel, { passive: false });
+  zoomContainer.addEventListener('mousedown', onMouseDown);
+  window.addEventListener('mouseup', onMouseUp);
+  window.addEventListener('mousemove', onMouseMove);
+
+  zoomContainer.addEventListener('touchstart', onTouchStart, { passive: false });
+  zoomContainer.addEventListener('touchmove', onTouchMove, { passive: false });
+  zoomContainer.addEventListener('touchend', onTouchEnd);
+  zoomContainer.addEventListener('touchcancel', onTouchEnd);
+
+  // Navegação por teclado
   document.addEventListener("keydown", function(e) {
     const viewer = document.getElementById("fullscreenViewer");
     if (viewer.style.display === "flex") {
-      if (e.key === "ArrowRight") {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         nextImage();
-      } else if (e.key === "ArrowLeft") {
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
         prevImage();
       } else if (e.key === "Escape") {
         closeFullscreen();
@@ -298,7 +537,7 @@
 
   document.getElementById("fullscreenBtn").addEventListener("click", openFullscreen);
 
-  // Inicializa StPageFlip padrão
+  // Inicializa StPageFlip
   document.addEventListener("DOMContentLoaded", () => {
     const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
       width: 800,
@@ -323,7 +562,7 @@
       "https://i.imgur.com/aoCOVms.jpeg",
       "https://i.imgur.com/VWWJ1z5.jpeg",
       "https://i.imgur.com/JVglSjP.jpeg",
-      "https://i.imgur.com/Gf6qv4V.jpeg" // Essa imagem permanece no flipbook
+      "https://i.imgur.com/Gf6qv4V.jpeg"
     ]);
 
     pageFlip.on("flip", (e) => {
@@ -341,3 +580,4 @@
 
 </body>
 </html>
+
