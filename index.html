@@ -99,16 +99,16 @@
       user-select: none;
     }
 
-    .nav-btn, .close-btn {
-      position: absolute;
-      background: #1a1a1a;
-      border: none;
-      color: var(--main-orange);
-      border-radius: 8px;
-      padding: 10px;
-      cursor: pointer;
-      z-index: 1001;
-    }
+    $1
+  transition: all 0.25s ease;
+}
+
+.nav-btn:hover, .close-btn:hover {
+  transform: scale(1.2);
+  background: #2a1a00;
+  box-shadow: 0 0 24px var(--main-orange-light);
+  border-color: var(--main-orange-light);
+}
 
     .close-btn {
       top: 24px;
@@ -196,9 +196,12 @@ let translateX = 0;
 let translateY = 0;
 
     function updateImage() {
-      viewerImage.src = fullscreenImages[currentImage];
-      scale = 1;
-      viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  viewerImage.src = fullscreenImages[currentImage];
+  scale = 1;
+  translateX = 0;
+  translateY = 0;
+  viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+}px, ${translateY}px) scale(${scale})`;
     }
 
     function openFullscreen() {
@@ -252,6 +255,20 @@ let translateY = 0;
   viewerImage = document.getElementById("viewerImage");
 
   viewerImage.addEventListener("mousedown", (e) => {
+    if (e.detail === 2) {
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      return;
+    }
+    if (e.detail === 2) {
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      return;
+    }
     if (scale <= 1) return;
     isDragging = true;
     startX = e.clientX - translateX;
@@ -297,6 +314,21 @@ let translateY = 0;
   viewerImage.onerror = () => {
     viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
   };
+
+  // Toque duplo para redefinir zoom
+  let lastTap = 0;
+  viewerImage.addEventListener("touchend", (e) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+    if (tapLength < 300 && tapLength > 0) {
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      e.preventDefault();
+    }
+    lastTap = currentTime;
+  });
   const pageIndicator = document.createElement("div");
   pageIndicator.style.position = "fixed";
   pageIndicator.style.bottom = "20px";
