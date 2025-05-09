@@ -6,13 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="stpageflip.min.css" />
   <style>
+    /* Fundo preto e textos claros para contraste */
     body {
       margin: 0;
-      background: #111;
+      background: #000; /* preto puro */
       height: 100vh;
       overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #eee;
+      color: #fff; /* texto branco para contraste */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     #flipbook {
@@ -20,12 +23,12 @@
       height: 100vh;
     }
 
+    /* Botão fullscreen estilizado */
     #fullscreenBtn {
       position: fixed;
       top: 20px;
       right: 20px;
       background: #00aaff;
-      color: white;
       border: none;
       padding: 12px 18px;
       font-size: 14px;
@@ -34,6 +37,13 @@
       z-index: 10;
       transition: background 0.3s, transform 0.2s;
       outline-offset: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-weight: 600;
+      user-select: none;
+      box-shadow: 0 4px 12px rgba(0,170,255,0.6);
     }
 
     #fullscreenBtn:hover,
@@ -41,6 +51,15 @@
       background: #008cd1;
       transform: scale(1.05);
       outline: 2px solid #005f8d;
+      box-shadow: 0 5px 15px rgba(0,140,209,0.8);
+    }
+
+    /* Ícone de lupa no botão fullscreen */
+    #fullscreenBtn svg {
+      fill: white;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
     }
 
     /* Tela cheia */
@@ -50,7 +69,7 @@
       top: 0; left: 0;
       width: 100%;
       height: 100%;
-      background: #000;
+      background: #000; /* fundo preto para combinar */
       z-index: 999;
       align-items: center;
       justify-content: center;
@@ -63,47 +82,66 @@
     #fullscreenViewer img {
       max-width: 90%;
       max-height: 85%;
-      box-shadow: 0 0 20px #000;
+      box-shadow: 0 0 30px #00aaff; /* brilho azul para destacar */
       border-radius: 10px;
       transition: opacity 0.3s;
+      user-select: none;
+      background: #111; /* leve fundo atrás da imagem para destaque */
     }
 
-    .nav-btn {
-      margin: 20px 10px;
-      background: #00aaff;
-      color: white;
+    /* Botões navegação e fechar estilizados */
+    .nav-btn, .close-btn {
+      background: none;
       border: none;
-      padding: 12px 20px;
-      font-size: 16px;
       cursor: pointer;
-      border-radius: 50px;
-      transition: background 0.3s, transform 0.2s;
       outline-offset: 2px;
+      transition: transform 0.2s ease, color 0.3s ease;
+      color: #00aaff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      padding: 8px;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(0,170,255,0.5);
+      font-weight: 600;
+    }
+
+    .nav-btn svg, .close-btn svg {
+      fill: #00aaff;
+      width: 28px;
+      height: 28px;
+      pointer-events: none;
     }
 
     .nav-btn:hover,
     .nav-btn:focus {
-      background: #008cd1;
-      transform: scale(1.05);
-      outline: 2px solid #005f8d;
+      color: #008cd1;
+      box-shadow: 0 0 20px #008cd1;
+      transform: scale(1.15);
+    }
+
+    .nav-btn:disabled {
+      color: #444;
+      box-shadow: none;
+      cursor: default;
     }
 
     .close-btn {
       position: absolute;
       top: 15px;
       right: 20px;
-      font-size: 24px;
-      background: none;
-      color: white;
-      border: none;
-      cursor: pointer;
-      outline-offset: 2px;
+      width: 40px;
+      height: 40px;
+      color: #00aaff;
+      box-shadow: 0 0 15px rgba(0, 170, 255, 0.9);
     }
 
     .close-btn:hover,
     .close-btn:focus {
-      color: #00aaff;
-      outline: 2px solid #005f8d;
+      color: #008cd1;
+      box-shadow: 0 0 25px #008cd1;
+      transform: scale(1.2);
     }
 
     @keyframes fadeIn {
@@ -111,26 +149,32 @@
       to { opacity: 1 }
     }
 
-    /* Responsive adjustments */
+    /* Responsive */
     @media (max-width: 768px) {
       #fullscreenBtn {
         padding: 10px 14px;
         font-size: 13px;
       }
-      .nav-btn {
-        padding: 10px 14px;
-        font-size: 14px;
+      .nav-btn, .close-btn {
+        width: 36px;
+        height: 36px;
       }
       #fullscreenViewer img {
         max-width: 95%;
         max-height: 70%;
+        box-shadow: 0 0 20px #00aaff;
       }
     }
   </style>
 </head>
 <body>
 
-<button id="fullscreenBtn" aria-label="Ver folheto em alta qualidade no modo tela cheia" title="Ver em Alta Qualidade">🔍 Ver em Alta Qualidade</button>
+<button id="fullscreenBtn" aria-label="Ver folheto em alta qualidade no modo tela cheia" title="Ver em Alta Qualidade" type="button">
+  <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+    <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.39 5.61 13.28 3.5 10.5 3.5S5.61 5.61 5.61 8.39 7.72 13.28 10.5 13.28a6.471 6.471 0 005.34-1.48l.27.28v.79l4.25 4.25c.4.4 1.04.4 1.44 0s.4-1.05 0-1.45L15.5 14zm-5 0C9.01 14 7 11.99 7 9.5S9.01 5 11.5 5 16 7.01 16 9.5 13.99 14 11.5 14z"/>
+  </svg>
+  Ver em Alta Qualidade
+</button>
 
 <main>
   <section aria-label="Folheto digital interativo">
@@ -139,11 +183,23 @@
 </main>
 
 <div id="fullscreenViewer" role="dialog" aria-modal="true" aria-labelledby="fullscreenTitle" tabindex="-1">
-  <button class="close-btn" onclick="closeFullscreen()" aria-label="Fechar visualizador em tela cheia" title="Fechar">✖</button>
+  <button class="close-btn" onclick="closeFullscreen()" aria-label="Fechar visualizador em tela cheia" title="Fechar" type="button" >
+    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7a1 1 0 00-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 001.41 1.41L12 13.41l4.89 4.89a1 1 0 001.41-1.41L13.41 12l4.89-4.89a1 1 0 000-1.4z"/>
+    </svg>
+  </button>
   <img id="viewerImage" src="" alt="Página ampliada do folheto" onerror="imageLoadError()" />
   <div>
-    <button class="nav-btn" onclick="prevImage()" aria-label="Página anterior" title="Página Anterior">⬅ Anterior</button>
-    <button class="nav-btn" onclick="nextImage()" aria-label="Próxima página" title="Próxima">Próxima ➡</button>
+    <button class="nav-btn" onclick="prevImage()" aria-label="Página anterior" title="Página Anterior" type="button" >
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    </button>
+    <button class="nav-btn" onclick="nextImage()" aria-label="Próxima página" title="Próxima" type="button" >
+      <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
+        <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+      </svg>
+    </button>
   </div>
 </div>
 
@@ -176,6 +232,7 @@
     img.src = fullscreenImages[currentImage];
     img.alt = `Página ${currentImage + 1} ampliada do folheto`;
     img.onerror = imageLoadError;
+    updateNavButtons();
   }
 
   function imageLoadError() {
@@ -196,6 +253,14 @@
       currentImage--;
       updateImage();
     }
+  }
+
+  // Desabilitar botões navegação nas extremidades
+  function updateNavButtons() {
+    const prevBtn = document.querySelector('.nav-btn[onclick="prevImage()"]');
+    const nextBtn = document.querySelector('.nav-btn[onclick="nextImage()"]');
+    prevBtn.disabled = currentImage === 0;
+    nextBtn.disabled = currentImage === fullscreenImages.length - 1;
   }
 
   // Navegação com teclado para acessibilidade
