@@ -32,12 +32,11 @@
       --main-orange-dark: #7a3800;
     }
 
-    /* Botão tela cheia estilizado quadrado moderno e centralizado no topo */
+    /* Botão tela cheia estilizado quadrado moderno e no topo direito */
     #fullscreenBtn {
       position: fixed;
       top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      right: 20px;
       background: var(--main-orange);
       border: none;
       padding: 14px 24px;
@@ -64,7 +63,7 @@
     #fullscreenBtn:hover,
     #fullscreenBtn:focus {
       background: var(--main-orange-dark);
-      transform: translateX(-50%) scale(1.1);
+      transform: scale(1.1);
       outline: 3px solid var(--main-orange-light);
       box-shadow: 0 6px 30px var(--main-orange-shadow);
     }
@@ -221,7 +220,7 @@
       #fullscreenBtn {
         padding: 12px 18px;
         font-size: 14px;
-        max-width: 180px;
+        max-width: 240px;
       }
       .nav-btn, .close-btn {
         width: 40px;
@@ -578,3 +577,4 @@
 
 </body>
 </html>
+
