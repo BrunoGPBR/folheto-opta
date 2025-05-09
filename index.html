@@ -62,6 +62,68 @@
       stroke-width: 2;
     }
 
+    #fullscreenViewer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    #zoomContainer {
+      position: relative;
+      width: 90vw;
+      max-width: 1000px;
+      height: 85vh;
+      overflow: hidden;
+      background: #111;
+      cursor: grab;
+    }
+
+    #viewerImage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      max-width: 100%;
+      max-height: 100%;
+      transform: translate(-50%, -50%) scale(1);
+      transition: transform 0.2s ease;
+      user-select: none;
+    }
+
+    .nav-btn, .close-btn {
+      position: absolute;
+      top: 24px;
+      background: #1a1a1a;
+      border: none;
+      color: var(--main-orange);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .close-btn {
+      right: 24px;
+    }
+
+    .nav-btn.prev {
+      left: 24px;
+    }
+
+    .nav-btn.next {
+      right: 24px;
+      top: auto;
+      bottom: 24px;
+    }
+
     @media (max-width: 500px) {
       #fullscreenBtn {
         top: 10px;
@@ -88,9 +150,64 @@
     </section>
   </main>
 
+  <div id="fullscreenViewer">
+    <button class="close-btn" onclick="closeFullscreen()">
+      <i data-lucide="x" class="lucide-icon"></i>
+    </button>
+    <button class="nav-btn prev" onclick="prevImage()">
+      <i data-lucide="chevron-left" class="lucide-icon"></i>
+    </button>
+    <div id="zoomContainer">
+      <img id="viewerImage" src="" alt="Página ampliada" />
+    </div>
+    <button class="nav-btn next" onclick="nextImage()">
+      <i data-lucide="chevron-right" class="lucide-icon"></i>
+    </button>
+  </div>
+
   <script src="stpageflip.min.js"></script>
   <script>
     lucide.createIcons();
+
+    const fullscreenImages = [
+      "https://i.imgur.com/uH4uk5l.jpeg",
+      "https://i.imgur.com/aoCOVms.jpeg",
+      "https://i.imgur.com/VWWJ1z5.jpeg",
+      "https://i.imgur.com/JVglSjP.jpeg",
+      "https://i.imgur.com/Gf6qv4V.jpeg"
+    ];
+
+    let currentImage = 0;
+    const viewerImage = document.getElementById("viewerImage");
+
+    function updateImage() {
+      viewerImage.src = fullscreenImages[currentImage];
+    }
+
+    function openFullscreen() {
+      document.getElementById("fullscreenViewer").style.display = "flex";
+      updateImage();
+    }
+
+    function closeFullscreen() {
+      document.getElementById("fullscreenViewer").style.display = "none";
+    }
+
+    function nextImage() {
+      if (currentImage < fullscreenImages.length - 1) {
+        currentImage++;
+        updateImage();
+      }
+    }
+
+    function prevImage() {
+      if (currentImage > 0) {
+        currentImage--;
+        updateImage();
+      }
+    }
+
+    document.getElementById("fullscreenBtn").addEventListener("click", openFullscreen);
 
     document.addEventListener("DOMContentLoaded", () => {
       const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
@@ -111,13 +228,7 @@
         mobileScrollSupport: true
       });
 
-      pageFlip.loadFromImages([
-        "https://i.imgur.com/uH4uk5l.jpeg",
-        "https://i.imgur.com/aoCOVms.jpeg",
-        "https://i.imgur.com/VWWJ1z5.jpeg",
-        "https://i.imgur.com/JVglSjP.jpeg",
-        "https://i.imgur.com/Gf6qv4V.jpeg"
-      ]);
+      pageFlip.loadFromImages(fullscreenImages);
     });
   </script>
 </body>
