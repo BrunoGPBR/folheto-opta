@@ -24,27 +24,28 @@
       height: 100vh;
     }
 
-    /* Cores base laranja do folder */
+    /* Cores base laranja escuro profissional */
     :root {
-      --main-orange: #ff6a00;
-      --main-orange-light: #ff944d;
-      --main-orange-shadow: rgba(255, 106, 0, 0.25);
-      --main-orange-dark: #cc5600;
+      --main-orange: #b35300;
+      --main-orange-light: #d07700;
+      --main-orange-shadow: rgba(179, 83, 0, 0.25);
+      --main-orange-dark: #7a3800;
     }
 
-    /* Botão fullscreen estilizado quadrado moderno */
+    /* Botão tela cheia estilizado quadrado moderno e centralizado no topo */
     #fullscreenBtn {
       position: fixed;
       top: 20px;
-      right: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       background: var(--main-orange);
       border: none;
-      padding: 14px 20px;
+      padding: 14px 24px;
       font-size: 16px;
       border-radius: 8px;
       cursor: pointer;
-      z-index: 10;
-      transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s ease;
+      z-index: 15;
+      transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s ease;
       outline-offset: 2px;
       display: flex;
       align-items: center;
@@ -52,18 +53,20 @@
       color: white;
       font-weight: 700;
       user-select: none;
-      box-shadow: 0 4px 18px var(--main-orange-shadow);
+      box-shadow: 0 4px 22px var(--main-orange-shadow);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-transform: uppercase;
       letter-spacing: 0.07em;
+      max-width: 240px;
+      white-space: nowrap;
     }
 
     #fullscreenBtn:hover,
     #fullscreenBtn:focus {
       background: var(--main-orange-dark);
-      transform: scale(1.1);
+      transform: translateX(-50%) scale(1.1);
       outline: 3px solid var(--main-orange-light);
-      box-shadow: 0 6px 25px var(--main-orange-shadow);
+      box-shadow: 0 6px 30px var(--main-orange-shadow);
     }
 
     #fullscreenBtn svg {
@@ -103,11 +106,11 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow:
-        0 0 25px var(--main-orange),
-        inset 0 0 24px var(--main-orange-light);
+        0 0 22px var(--main-orange),
+        inset 0 0 22px var(--main-orange-light);
       background: #111;
       cursor: grab;
-      touch-action: none; /* para gestos */
+      touch-action: none;
       transition: box-shadow 0.3s ease;
     }
     #zoomContainer:active {
@@ -124,14 +127,13 @@
       height: auto;
       transform-origin: center center;
       user-select: none;
-      filter: drop-shadow(0 0 6px var(--main-orange));
+      filter: drop-shadow(0 0 8px var(--main-orange));
       pointer-events: none;
       transition: filter 0.3s ease;
-      /* PRINCIPAL CORREÇÃO: Inclui translate(-50%, -50%) para centralizar e depois adiciona pan e zoom */
       transform: translate(calc(-50% + 0px), calc(-50% + 0px)) scale(1);
     }
     #zoomContainer:hover #viewerImage {
-      filter: drop-shadow(0 0 12px var(--main-orange-light));
+      filter: drop-shadow(0 0 14px var(--main-orange-light));
     }
 
     /* Botões navegação e fechar quadrados modernos */
@@ -219,6 +221,7 @@
       #fullscreenBtn {
         padding: 12px 18px;
         font-size: 14px;
+        max-width: 180px;
       }
       .nav-btn, .close-btn {
         width: 40px;
@@ -237,11 +240,11 @@
 </head>
 <body>
 
-<button id="fullscreenBtn" aria-label="Ver folheto em alta qualidade no modo tela cheia" title="Ver em Alta Qualidade" type="button">
+<button id="fullscreenBtn" aria-label="Ativar modo tela cheia para visualização" title="Tela Cheia" type="button">
   <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" >
     <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.39 5.61 13.28 3.5 10.5 3.5S5.61 5.61 5.61 8.39 7.72 13.28 10.5 13.28a6.471 6.471 0 005.34-1.48l.27.28v.79l4.25 4.25c.4.4 1.04.4 1.44 0s.4-1.05 0-1.45L15.5 14zm-5 0C9.01 14 7 11.99 7 9.5S9.01 5 11.5 5 16 7.01 16 9.5 13.99 14 11.5 14z"/>
   </svg>
-  Ver em Alta Qualidade
+  Tela Cheia
 </button>
 
 <main>
@@ -296,11 +299,9 @@
   const viewerImage = document.getElementById('viewerImage');
 
   function applyTransform() {
-    // Aplica translate(-50%, -50%) para centralizar + pan e escala
     viewerImage.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
   }
 
-  // Mouse wheel para zoom (desktop)
   function onWheel(e) {
     e.preventDefault();
     const zoomStep = 0.1;
@@ -326,7 +327,6 @@
     applyTransform();
   }
 
-  // Limitar pan para não sair a imagem da viewport
   function limitPan() {
     if (!viewerImage.naturalWidth || !viewerImage.naturalHeight) return;
 
@@ -338,7 +338,6 @@
     const halfContainerWidth = bounds.width / 2;
     const halfContainerHeight = bounds.height / 2;
 
-    // Limites máximos e mínimos
     const minX = Math.min(0, halfContainerWidth - scaledWidth / 2);
     const maxX = Math.max(0, scaledWidth / 2 - halfContainerWidth);
     const minY = Math.min(0, halfContainerHeight - scaledHeight / 2);
@@ -351,7 +350,7 @@
   }
 
   function onMouseDown(e) {
-    if (scale <= 1) return; // não drag se zoom = 1
+    if (scale <= 1) return;
     e.preventDefault();
     isDragging = true;
     startX = e.clientX - translateX;
@@ -375,7 +374,6 @@
     }
   }
 
-  // Touch handlers para mobile (pinch zoom e pan)
   let lastTouchDistance = null;
   let lastTouchMidpoint = null;
   let isTouchPanning = false;
@@ -457,14 +455,10 @@
   }
 
 
-  /*
-    Controle da navegação e atualização da imagem na visualização fullscreen
-  */
   function openFullscreen() {
     const viewer = document.getElementById("fullscreenViewer");
     viewer.style.display = "flex";
     viewer.focus();
-    currentImage = 0;
     resetTransform();
     updateImage();
   }
@@ -487,14 +481,14 @@
   }
 
   function nextImage() {
-    if(currentImage < fullscreenImages.length - 1) {
+    if (currentImage < fullscreenImages.length - 1) {
       currentImage++;
       updateImage();
     }
   }
 
   function prevImage() {
-    if(currentImage > 0) {
+    if (currentImage > 0) {
       currentImage--;
       updateImage();
     }
@@ -584,4 +578,3 @@
 
 </body>
 </html>
-
