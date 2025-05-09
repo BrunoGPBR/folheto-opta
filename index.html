@@ -118,8 +118,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      max-width: none; /* vamos controlar via CSS transform */
-      max-height: none;
+      max-width: 100%;
+      max-height: 100%;
       width: auto;
       height: auto;
       transform-origin: center center;
@@ -127,6 +127,8 @@
       filter: drop-shadow(0 0 6px var(--main-orange));
       pointer-events: none;
       transition: filter 0.3s ease;
+      /* PRINCIPAL CORREÇÃO: Inclui translate(-50%, -50%) para centralizar e depois adiciona pan e zoom */
+      transform: translate(calc(-50% + 0px), calc(-50% + 0px)) scale(1);
     }
     #zoomContainer:hover #viewerImage {
       filter: drop-shadow(0 0 12px var(--main-orange-light));
@@ -294,7 +296,8 @@
   const viewerImage = document.getElementById('viewerImage');
 
   function applyTransform() {
-    viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    // Aplica translate(-50%, -50%) para centralizar + pan e escala
+    viewerImage.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
   }
 
   // Mouse wheel para zoom (desktop)
@@ -309,13 +312,12 @@
     }
     scale = Math.min(Math.max(1, scale), 5);
 
-    // Ajustar translate para zoom centrado no mouse
     const bounds = zoomContainer.getBoundingClientRect();
     const offsetX = e.clientX - bounds.left;
     const offsetY = e.clientY - bounds.top;
 
-    const dx = (offsetX - translateX) * (scale / oldScale - 1);
-    const dy = (offsetY - translateY) * (scale / oldScale - 1);
+    const dx = (offsetX - (bounds.width / 2) - translateX) * (scale / oldScale - 1);
+    const dy = (offsetY - (bounds.height / 2) - translateY) * (scale / oldScale - 1);
 
     translateX -= dx;
     translateY -= dy;
@@ -333,11 +335,14 @@
     const scaledWidth = viewerImage.naturalWidth * scale;
     const scaledHeight = viewerImage.naturalHeight * scale;
 
-    // Limites máximos e mínimos de translate para manter imagem dentro do container
-    const minX = Math.min(0, bounds.width - scaledWidth);
-    const maxX = 0;
-    const minY = Math.min(0, bounds.height - scaledHeight);
-    const maxY = 0;
+    const halfContainerWidth = bounds.width / 2;
+    const halfContainerHeight = bounds.height / 2;
+
+    // Limites máximos e mínimos
+    const minX = Math.min(0, halfContainerWidth - scaledWidth / 2);
+    const maxX = Math.max(0, scaledWidth / 2 - halfContainerWidth);
+    const minY = Math.min(0, halfContainerHeight - scaledHeight / 2);
+    const maxY = Math.max(0, scaledHeight / 2 - halfContainerHeight);
 
     if (translateX < minX) translateX = minX;
     if (translateX > maxX) translateX = maxX;
@@ -346,7 +351,7 @@
   }
 
   function onMouseDown(e) {
-    if (scale <= 1) return; // sem drag se não estiver zoom
+    if (scale <= 1) return; // não drag se zoom = 1
     e.preventDefault();
     isDragging = true;
     startX = e.clientX - translateX;
@@ -413,13 +418,12 @@
       scale += zoomStep;
       scale = Math.min(Math.max(1, scale), 5);
 
-      // Ajusta translate para zoom centrado no midpoint
       const bounds = zoomContainer.getBoundingClientRect();
       const offsetX = lastTouchMidpoint.x - bounds.left;
       const offsetY = lastTouchMidpoint.y - bounds.top;
 
-      const dx = (offsetX - translateX) * (scale / oldScale - 1);
-      const dy = (offsetY - translateY) * (scale / oldScale - 1);
+      const dx = (offsetX - (bounds.width / 2) - translateX) * (scale / oldScale - 1);
+      const dy = (offsetY - (bounds.height / 2) - translateY) * (scale / oldScale - 1);
 
       translateX -= dx;
       translateY -= dy;
