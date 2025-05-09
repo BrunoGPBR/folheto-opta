@@ -5,11 +5,7 @@
   <title>Folheto Opta - Interativo + Leitor HD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="stpageflip.min.css" />
-  <script src="https://unpkg.com/lucide@latest">
-viewerImage.onerror = () => {
-  viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
-};
-</script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
       --main-orange: #b35300;
@@ -189,7 +185,7 @@ viewerImage.onerror = () => {
   "https://i.imgur.com/JVglSjP.jpeg"
 ]; // Removida a página branca do modo fullscreen
 
-    let // currentImage = 0; (comentado para manter a página atual)
+    let currentImage = 0;
 let pageFlip;
     let viewerImage;
     let scale = 1;
@@ -289,6 +285,9 @@ window.addEventListener("mouseup", () => {
 
     document.addEventListener("DOMContentLoaded", () => {
   viewerImage = document.getElementById("viewerImage");
+  viewerImage.onerror = () => {
+    viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
+  };
   const pageIndicator = document.createElement("div");
   pageIndicator.style.position = "fixed";
   pageIndicator.style.bottom = "20px";
