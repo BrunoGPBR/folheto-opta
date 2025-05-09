@@ -5,7 +5,11 @@
   <title>Folheto Opta - Interativo + Leitor HD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="stpageflip.min.css" />
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest">
+viewerImage.onerror = () => {
+  viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
+};
+</script>
   <style>
     :root {
       --main-orange: #b35300;
@@ -163,10 +167,7 @@
     <div id="zoomContainer">
       <img id="viewerImage" src="" alt="Página ampliada" />
     </div>
-    <button class="nav-btn next" onclick="nextImage()">
-      <i data-lucide="chevron-right" class="lucide-icon"></i>
-    </button>
-  </div>
+    
 
   
 <a href="/download/folheto-opta.pdf" target="_blank" download id="downloadBtn" style="position: fixed; bottom: 24px; left: 24px; z-index: 1002; background: #1a1a1a; border: none; padding: 10px 16px; color: white; font-weight: bold; text-decoration: none; border-radius: 8px; font-family: 'Segoe UI', sans-serif; display: none;">
@@ -188,7 +189,7 @@
   "https://i.imgur.com/JVglSjP.jpeg"
 ]; // Removida a página branca do modo fullscreen
 
-    let currentImage = 0;
+    let // currentImage = 0; (comentado para manter a página atual)
 let pageFlip;
     let viewerImage;
     let scale = 1;
@@ -210,7 +211,6 @@ let translateY = 0;
   document.getElementById("fullscreenBtn").style.display = "none";
   currentImage = 0;
   updateImage();
-  updatePageIndicator();
   updatePageIndicator();
 }
 
