@@ -11,7 +11,8 @@
       background: #111;
       height: 100vh;
       overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
     }
 
     #flipbook {
@@ -32,11 +33,14 @@
       cursor: pointer;
       z-index: 10;
       transition: background 0.3s, transform 0.2s;
+      outline-offset: 2px;
     }
 
-    #fullscreenBtn:hover {
+    #fullscreenBtn:hover,
+    #fullscreenBtn:focus {
       background: #008cd1;
       transform: scale(1.05);
+      outline: 2px solid #005f8d;
     }
 
     /* Tela cheia */
@@ -52,6 +56,8 @@
       justify-content: center;
       flex-direction: column;
       animation: fadeIn 0.3s ease-in-out;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     #fullscreenViewer img {
@@ -72,11 +78,14 @@
       cursor: pointer;
       border-radius: 50px;
       transition: background 0.3s, transform 0.2s;
+      outline-offset: 2px;
     }
 
-    .nav-btn:hover {
+    .nav-btn:hover,
+    .nav-btn:focus {
       background: #008cd1;
       transform: scale(1.05);
+      outline: 2px solid #005f8d;
     }
 
     .close-btn {
@@ -88,32 +97,59 @@
       color: white;
       border: none;
       cursor: pointer;
+      outline-offset: 2px;
+    }
+
+    .close-btn:hover,
+    .close-btn:focus {
+      color: #00aaff;
+      outline: 2px solid #005f8d;
     }
 
     @keyframes fadeIn {
       from { opacity: 0 }
       to { opacity: 1 }
     }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      #fullscreenBtn {
+        padding: 10px 14px;
+        font-size: 13px;
+      }
+      .nav-btn {
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+      #fullscreenViewer img {
+        max-width: 95%;
+        max-height: 70%;
+      }
+    }
   </style>
 </head>
 <body>
 
-<button id="fullscreenBtn">🔍 Ver em Alta Qualidade</button>
+<button id="fullscreenBtn" aria-label="Ver folheto em alta qualidade no modo tela cheia" title="Ver em Alta Qualidade">🔍 Ver em Alta Qualidade</button>
 
-<div id="flipbook"></div>
+<main>
+  <section aria-label="Folheto digital interativo">
+    <div id="flipbook" role="region" aria-live="polite" aria-label="Folheto interativo com páginas viráveis"></div>
+  </section>
+</main>
 
-<div id="fullscreenViewer">
-  <button class="close-btn" onclick="closeFullscreen()">✖</button>
-  <img id="viewerImage" src="" alt="Página ampliada">
+<div id="fullscreenViewer" role="dialog" aria-modal="true" aria-labelledby="fullscreenTitle" tabindex="-1">
+  <button class="close-btn" onclick="closeFullscreen()" aria-label="Fechar visualizador em tela cheia" title="Fechar">✖</button>
+  <img id="viewerImage" src="" alt="Página ampliada do folheto" onerror="imageLoadError()" />
   <div>
-    <button class="nav-btn" onclick="prevImage()">⬅ Anterior</button>
-    <button class="nav-btn" onclick="nextImage()">Próxima ➡</button>
+    <button class="nav-btn" onclick="prevImage()" aria-label="Página anterior" title="Página Anterior">⬅ Anterior</button>
+    <button class="nav-btn" onclick="nextImage()" aria-label="Próxima página" title="Próxima">Próxima ➡</button>
   </div>
 </div>
 
 <script src="stpageflip.min.js"></script>
 <script>
-  // Modo Fullscreen (sem a página branca final)
+  // Imagens para o modo fullscreen (sem a página branca final)
   const fullscreenImages = [
     "https://i.imgur.com/uH4uk5l.jpeg",
     "https://i.imgur.com/aoCOVms.jpeg",
@@ -124,31 +160,61 @@
   let currentImage = 0;
 
   function openFullscreen() {
-    document.getElementById("fullscreenViewer").style.display = "flex";
-    document.getElementById("viewerImage").src = fullscreenImages[currentImage];
+    const viewer = document.getElementById("fullscreenViewer");
+    viewer.style.display = "flex";
+    viewer.focus();
+    updateImage();
   }
 
   function closeFullscreen() {
-    document.getElementById("fullscreenViewer").style.display = "none";
+    const viewer = document.getElementById("fullscreenViewer");
+    viewer.style.display = "none";
+  }
+
+  function updateImage() {
+    const img = document.getElementById("viewerImage");
+    img.src = fullscreenImages[currentImage];
+    img.alt = `Página ${currentImage + 1} ampliada do folheto`;
+    img.onerror = imageLoadError;
+  }
+
+  function imageLoadError() {
+    const img = document.getElementById("viewerImage");
+    img.alt = "Erro ao carregar a imagem.";
+    img.src = "https://via.placeholder.com/800x1120?text=Imagem+indisponível";
   }
 
   function nextImage() {
     if (currentImage < fullscreenImages.length - 1) {
       currentImage++;
-      document.getElementById("viewerImage").src = fullscreenImages[currentImage];
+      updateImage();
     }
   }
 
   function prevImage() {
     if (currentImage > 0) {
       currentImage--;
-      document.getElementById("viewerImage").src = fullscreenImages[currentImage];
+      updateImage();
     }
   }
 
+  // Navegação com teclado para acessibilidade
+  document.addEventListener("keydown", function(e) {
+    const viewer = document.getElementById("fullscreenViewer");
+    if (viewer.style.display === "flex") {
+      if (e.key === "ArrowRight") {
+        nextImage();
+      } else if (e.key === "ArrowLeft") {
+        prevImage();
+      } else if (e.key === "Escape") {
+        closeFullscreen();
+      }
+    }
+  });
+
   document.getElementById("fullscreenBtn").addEventListener("click", openFullscreen);
 
-  // StPageFlip padrão
+  // Inicializa StPageFlip padrão
   document.addEventListener("DOMContentLoaded", () => {
     const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
       width: 800,
@@ -173,7 +239,7 @@
       "https://i.imgur.com/aoCOVms.jpeg",
       "https://i.imgur.com/VWWJ1z5.jpeg",
       "https://i.imgur.com/JVglSjP.jpeg",
-      "https://i.imgur.com/Gf6qv4V.jpeg" // Essa continua no flipbook
+      "https://i.imgur.com/Gf6qv4V.jpeg" // Essa imagem permanece no flipbook
     ]);
 
     pageFlip.on("flip", (e) => {
@@ -191,3 +257,4 @@
 
 </body>
 </html>
+
