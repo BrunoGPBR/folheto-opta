@@ -189,6 +189,7 @@
 ]; // Removida a página branca do modo fullscreen
 
     let currentImage = 0;
+let pageFlip;
     let viewerImage;
     let scale = 1;
 let isDragging = false;
@@ -234,7 +235,11 @@ let translateY = 0;
     }
 
     document.getElementById("fullscreenBtn").addEventListener("click", () => {
-  currentImage = pageFlip.getCurrentPageIndex();
+  if (pageFlip) {
+    currentImage = pageFlip.getCurrentPageIndex();
+  } else {
+    currentImage = 0;
+  }
   openFullscreen();
 });
 
@@ -314,7 +319,7 @@ window.addEventListener("mouseup", () => {
       goToFirstPageBtn.onclick = () => pageFlip.flip(0);
       document.body.appendChild(goToFirstPageBtn);
       lucide.createIcons();
-      const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+      pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
         width: 800,
         height: 1120,
         size: "stretch",
