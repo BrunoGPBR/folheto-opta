@@ -163,12 +163,9 @@
     <div id="zoomContainer">
       <img id="viewerImage" src="" alt="Página ampliada" />
     </div>
-    
-
-  
-<a href="folheto-opta.pdf" target="_blank" download id="downloadBtn" style="position: fixed; bottom: 24px; left: 24px; z-index: 1002; background: #1a1a1a; border: none; padding: 10px 16px; color: white; font-weight: bold; text-decoration: none; border-radius: 8px; font-family: 'Segoe UI', sans-serif; display: none;">
-  <i data-lucide="download" class="lucide-icon"></i> Baixar PDF
-</a>
+    <a href="folheto-opta.pdf" target="_blank" download id="downloadBtn" style="position: fixed; bottom: 24px; left: 24px; z-index: 1002; background: #1a1a1a; border: none; padding: 10px 16px; color: white; font-weight: bold; text-decoration: none; border-radius: 8px; font-family: 'Segoe UI', sans-serif; display: none;">
+      <i data-lucide="download" class="lucide-icon"></i> Baixar PDF
+    </a>
     <button class="nav-btn next" onclick="nextImage()">
       <i data-lucide="chevron-right" class="lucide-icon"></i>
     </button>
@@ -179,21 +176,21 @@
     lucide.createIcons();
 
     const fullscreenImages = [
-  "https://i.imgur.com/uH4uk5l.jpeg",
-  "https://i.imgur.com/aoCOVms.jpeg",
-  "https://i.imgur.com/VWWJ1z5.jpeg",
-  "https://i.imgur.com/JVglSjP.jpeg"
-]; // Removida a página branca do modo fullscreen
+      "https://i.imgur.com/4IkMMn5.jpg",
+      "https://i.imgur.com/imvjZqG.jpg",
+      "https://i.imgur.com/E3vyiUX.jpg",
+      "https://i.imgur.com/tSkWrSS.jpg"
+    ];
 
     let currentImage = 0;
-let pageFlip;
+    let pageFlip;
     let viewerImage;
     let scale = 1;
-let isDragging = false;
-let startX = 0;
-let startY = 0;
-let translateX = 0;
-let translateY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let translateX = 0;
+    let translateY = 0;
 
     function updateImage() {
       viewerImage.src = fullscreenImages[currentImage];
@@ -202,19 +199,19 @@ let translateY = 0;
     }
 
     function openFullscreen() {
-  document.getElementById("downloadBtn").style.display = "flex";
-  document.getElementById("fullscreenViewer").style.display = "flex";
-  document.getElementById("fullscreenBtn").style.display = "none";
-  currentImage = 0;
-  updateImage();
-  updatePageIndicator();
-}
+      document.getElementById("downloadBtn").style.display = "flex";
+      document.getElementById("fullscreenViewer").style.display = "flex";
+      document.getElementById("fullscreenBtn").style.display = "none";
+      currentImage = 0;
+      updateImage();
+      updatePageIndicator();
+    }
 
     function closeFullscreen() {
-  document.getElementById("downloadBtn").style.display = "none";
-  document.getElementById("fullscreenViewer").style.display = "none";
-  document.getElementById("fullscreenBtn").style.display = "flex";
-}
+      document.getElementById("downloadBtn").style.display = "none";
+      document.getElementById("fullscreenViewer").style.display = "none";
+      document.getElementById("fullscreenBtn").style.display = "flex";
+    }
 
     function nextImage() {
       if (currentImage < fullscreenImages.length - 1) {
@@ -231,93 +228,86 @@ let translateY = 0;
     }
 
     document.getElementById("fullscreenBtn").addEventListener("click", () => {
-  if (pageFlip) {
-    currentImage = pageFlip.getCurrentPageIndex();
-  } else {
-    currentImage = 0;
-  }
-  openFullscreen();
-});
-
-// Drag to pan
-
-
-
-
-
-
-    
+      if (pageFlip) {
+        currentImage = pageFlip.getCurrentPageIndex();
+      } else {
+        currentImage = 0;
+      }
+      openFullscreen();
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
-  viewerImage = document.getElementById("viewerImage");
+      viewerImage = document.getElementById("viewerImage");
 
-  viewerImage.addEventListener("mousedown", (e) => {
-    if (scale <= 1) return;
-    isDragging = true;
-    startX = e.clientX - translateX;
-    startY = e.clientY - translateY;
-    viewerImage.style.cursor = 'grabbing';
-  });
+      viewerImage.addEventListener("mousedown", (e) => {
+        if (scale <= 1) return;
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        viewerImage.style.cursor = 'grabbing';
+      });
 
-  window.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-    translateX = e.clientX - startX;
-    translateY = e.clientY - startY;
-    viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-  });
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      });
 
-  window.addEventListener("mouseup", () => {
-    isDragging = false;
-    viewerImage.style.cursor = 'grab';
-  });
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+        viewerImage.style.cursor = 'grab';
+      });
 
-  document.getElementById("zoomContainer").addEventListener("wheel", function(e) {
-    e.preventDefault();
-    const zoomFactor = 0.1;
-    const rect = viewerImage.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
+      document.getElementById("zoomContainer").addEventListener("wheel", function(e) {
+        e.preventDefault();
+        const zoomFactor = 0.1;
+        const rect = viewerImage.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
 
-    const oldScale = scale;
-    if (e.deltaY < 0) {
-      scale += zoomFactor;
-    } else {
-      scale = Math.max(1, scale - zoomFactor);
-    }
+        const oldScale = scale;
+        if (e.deltaY < 0) {
+          scale += zoomFactor;
+        } else {
+          scale = Math.max(1, scale - zoomFactor);
+        }
 
-    const dx = offsetX - rect.width / 2;
-    const dy = offsetY - rect.height / 2;
+        const dx = offsetX - rect.width / 2;
+        const dy = offsetY - rect.height / 2;
 
-    translateX -= dx * (scale / oldScale - 1);
-    translateY -= dy * (scale / oldScale - 1);
+        translateX -= dx * (scale / oldScale - 1);
+        translateY -= dy * (scale / oldScale - 1);
 
-    viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-  });
-  viewerImage = document.getElementById("viewerImage");
-  viewerImage.onerror = () => {
-    viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
-  };
-  const pageIndicator = document.createElement("div");
-  pageIndicator.style.position = "fixed";
-  pageIndicator.style.bottom = "20px";
-  pageIndicator.style.right = "50%";
-  pageIndicator.style.transform = "translateX(50%)";
-  pageIndicator.style.color = "#fff";
-  pageIndicator.style.fontSize = "14px";
-  pageIndicator.style.fontFamily = "Segoe UI, sans-serif";
-  pageIndicator.style.zIndex = "1002";
-  pageIndicator.id = "pageIndicator";
-  document.getElementById("fullscreenViewer").appendChild(pageIndicator);
+        viewerImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      });
 
-  function updatePageIndicator() {
-    pageIndicator.textContent = `Página ${currentImage + 1} de ${fullscreenImages.length}`;
-  }
+      viewerImage.onerror = () => {
+        viewerImage.src = 'https://via.placeholder.com/800x1000?text=Imagem+indispon%C3%ADvel';
+      };
 
-  const originalUpdateImage = updateImage;
-  updateImage = function() {
-    originalUpdateImage();
-    updatePageIndicator();
-  };
+      const pageIndicator = document.createElement("div");
+      pageIndicator.style.position = "fixed";
+      pageIndicator.style.bottom = "20px";
+      pageIndicator.style.right = "50%";
+      pageIndicator.style.transform = "translateX(50%)";
+      pageIndicator.style.color = "#fff";
+      pageIndicator.style.fontSize = "14px";
+      pageIndicator.style.fontFamily = "Segoe UI, sans-serif";
+      pageIndicator.style.zIndex = "1002";
+      pageIndicator.id = "pageIndicator";
+      document.getElementById("fullscreenViewer").appendChild(pageIndicator);
+
+      function updatePageIndicator() {
+        pageIndicator.textContent = `Página ${currentImage + 1} de ${fullscreenImages.length}`;
+      }
+
+      const originalUpdateImage = updateImage;
+      updateImage = function() {
+        originalUpdateImage();
+        updatePageIndicator();
+      };
+
       const goToFirstPageBtn = document.createElement("button");
       goToFirstPageBtn.innerHTML = '<i data-lucide="refresh-ccw" class="lucide-icon"></i>';
       goToFirstPageBtn.className = "nav-btn";
@@ -327,6 +317,7 @@ let translateY = 0;
       goToFirstPageBtn.onclick = () => pageFlip.flip(0);
       document.body.appendChild(goToFirstPageBtn);
       lucide.createIcons();
+
       pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
         width: 800,
         height: 1120,
